@@ -128,7 +128,7 @@ check_memsize(ValueEts, Size) ->
 shrink_table(ValueEts) ->
     Now = calendar:local_time(),
     CurrentTime = calendar:datetime_to_gregorian_seconds(Now),
-    ExpiredKeys = check_sever:sync_shrink(CurrentTime),
+    ExpiredKeys = check_server:sync_shrink(CurrentTime),
     lists:foreach(fun(K) ->
         ets:delete(ValueEts, K)
     end, ExpiredKeys).
@@ -146,7 +146,7 @@ delete_items(_ValueEts, _ThresholdSize, []) ->
     ok;
 delete_items(ValueEts, ThresholdSize, [Head|Tail]) ->
     ets:delete(ValueEts, Head),
-    check_est:async_delete(Head),
+    check_server:async_delete(Head),
     case check_memsize(ValueEts, ThresholdSize) of
         over ->
             delete_items(ValueEts, ThresholdSize, [Tail]);
