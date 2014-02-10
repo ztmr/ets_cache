@@ -1,15 +1,28 @@
-LIBDIR=`erl -eval 'io:format("~s~n", [code:lib_dir()])' -s init stop -noshell`
-VERSION=0.2
-PKGNAME=erlmc
+# This Makefile written by concrete
+#
+# {concrete_makefile_version, 1}
+#
+# Use this to override concrete's default dialyzer options of
+# -Wunderspecs
+# DIALYZER_OPTS = ...
 
-all: emake
+# List dependencies that you do NOT want to be included in the
+# dialyzer PLT for the project here.  Typically, you would list a
+# dependency here if it isn't spec'd well and doesn't play nice with
+# dialyzer or otherwise mucks things up.
+#
+# DIALYZER_SKIP_DEPS = bad_dep_1 \
+#                      bad_dep_2
 
-emake:
-	erl -make
-		
-clean:
-	rm -rf erl_crash.dump ebin/*.beam
+# If you want to add dependencies to the default "all" target provided
+# by concrete, add them here (along with make rules to build them if needed)
+# ALL_HOOK = ...
 
-install:
-	mkdir -p $(prefix)/$(LIBDIR)/$(PKGNAME)-$(VERSION)/{ebin,include}
-	for i in ebin/*.beam ebin/*.app include/*.hrl; do install $$i $(prefix)/$(LIBDIR)/$(PKGNAME)-$(VERSION)/$$i ; done
+concrete_rules_file = $(wildcard concrete.mk)
+ifeq ($(concrete_rules_file),concrete.mk)
+    include concrete.mk
+else
+    all:
+	@echo "ERROR: missing concrete.mk"
+	@echo "  run: concrete update"
+endif
